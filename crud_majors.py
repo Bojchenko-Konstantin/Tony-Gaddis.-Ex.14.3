@@ -17,13 +17,13 @@ def make_CRUD_Majors():
         
         if choice_CRUD_Majors == NEW_MAJOR:
             new_major()
-        if choice_CRUD_Majors == FIND_MAJOR:
+        elif choice_CRUD_Majors == FIND_MAJOR:
             find_major()
-        if choice_CRUD_Majors == UPDATE_MAJOR:
+        elif choice_CRUD_Majors == UPDATE_MAJOR:
             update_major()
-        if choice_CRUD_Majors == DELETE_MAJOR:
+        elif choice_CRUD_Majors == DELETE_MAJOR:
             delete_major()
-        if choice_CRUD_Majors == SHOW_ALL_MAJORS:
+        elif choice_CRUD_Majors == SHOW_ALL_MAJORS:
             show_majors() 
 
 def display_menu_majors():
@@ -55,16 +55,16 @@ def update_major():
     find_major()
     selected_id_majors=int(input(f'Выберите ID обновляемой позиции: '))
     name_major=input(f'Введите новое название специальности: ')
-    num_updated_major=update_row_major(selected_id_majors, name_major)
-    print(f'{num_updated_major} строк(а) обновлено.')
+    update_row_major(name_major, selected_id_majors)
+    
 
 def delete_major():
     find_major()
     selected_id_majors=int(input(f'Выберите ID удаляемой позиции: '))
     sure=input('Вы уверены, что хотите удалить данную позицию? (д/н): ')
     if sure.lower()=='д':
-        num_delete_major=delete_row_major(selected_id_majors)
-        print(f'{num_delete_major} строк(а) удалено.')
+        delete_row_major(selected_id_majors)
+        
         
 def show_majors():
     conn=None
@@ -118,24 +118,23 @@ def display_find_major(name_major):
             conn.close()
             return len(results)
 
-def update_row_major(selected_id_majors, name_major):
+def update_row_major(name_major, selected_id_majors):
     conn=None
     try:
         conn=sqlite3.connect('student_info.db')
         cur=conn.cursor()
         cur.execute('PRAGMA foreign_keys=ON')
         cur.execute('''UPDATE Majors
-                    SET Name = ?,
+                    SET Name = ?
                     WHERE MajorID == ?''',
                     (name_major, selected_id_majors))
         conn.commit()
-        num_updated_major=cur.rowcount
     except sqlite3.Error as err:
         print('Ошибка базы данных', err)
     finally:
         if conn!=None:
             conn.close()
-        return num_updated_major
+            
 
 def delete_row_major(selected_id_majors):
     conn=None
@@ -144,16 +143,14 @@ def delete_row_major(selected_id_majors):
         cur=conn.cursor()
         cur.execute('PRAGMA foreign_keys=ON')
         cur.execute('''DELETE FROM Majors
-                    WHERE selected_id_majors==?''',
-                    (selected_id_majors))
+                    WHERE MajorID ==?''',
+                    (selected_id_majors, ))
         conn.commit()
-        num_delete_major=cur.rowcount
     except sqlite3.Error as err:
         print('Ошибка базы данных', err)
     finally:
         if conn!=None:
             conn.close()
-        return num_delete_major
     
 make_CRUD_Majors()
 
