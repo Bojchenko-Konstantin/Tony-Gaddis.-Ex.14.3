@@ -33,6 +33,7 @@ def display_menu_majors():
     print(f'3. Обновить существующую специальность.')
     print(f'4. Удалить существующую специальность.')
     print(f'5. Вывести на экран список всех специальностей.')
+    print(f'6. Выйти из программы.')
 
 def get_menu_majors():
     choice_CRUD_Majors=int(input('Введите ваш вариант: '))
@@ -47,7 +48,7 @@ def new_major():
     insert_row_major(name_major)
 
 def find_major():
-    name_major=input(f'Введите название искомой специальности.')
+    name_major=input(f'Введите название искомой специальности: ')
     num_found=display_find_major(name_major)
     print(f'{num_found} строк(а) найдено.')
 
@@ -74,8 +75,9 @@ def show_majors():
         cur.execute('PRAGMA foreign_keys=ON')
         cur.execute('''SELECT * FROM Majors''')
         results = cur.fetchall()
+        print(f'**************************************')
         for row in results:
-            print(f'{row[0]:2} {row[1]:35}')
+            print(f'{row[0]:<2} {row[1]:<15}')
     except sqlite3.Error as err:
         print('Ошибка базы данных', err)
     finally:
@@ -109,8 +111,9 @@ def display_find_major(name_major):
                     WHERE Name == ?''',
                     (name_major, ))
         results=cur.fetchall()
+        print(f'********************************************')
         for row in results:
-            print(f'ID: {row[0]} Специальность: {row[1]}')
+            print(f'ID: {row[0]:<3} Специальность: {row[1]:<15}')
     except sqlite3.Error as err:
         print('Ошибка базы данных', err)
     finally:
